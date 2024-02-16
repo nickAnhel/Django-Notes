@@ -1,0 +1,6 @@
+<a href="{% url "notes:create" %}" class="create">Create note</a>
+<ul>
+    {% for note in notes %}
+        <a href="{{ note.get_absolute_url }}"><li>{{ note.title }}</li></a>
+    {% endfor %}
+</ul>
