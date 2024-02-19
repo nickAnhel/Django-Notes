@@ -1,11 +1,16 @@
-from django.urls import path
+from django.urls import include, path
 from . import views
 
 
 app_name = "notes"
 
+detail_patterns = [
+    path("", views.note_detail, name="detail"),
+    path("edit/", views.note_edit, name="edit"),
+]
+
 urlpatterns = [
     path("", views.note_list, name="list"),
-    path("detail/<slug:slug>/", views.note_detail, name="detail"),
     path("create/", views.note_create, name="create"),
+    path("detail/<slug:slug>/", include(detail_patterns)),
 ]

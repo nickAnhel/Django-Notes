@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Note{% endblock title %}
+
+{% block list %}
+    {% include "note/list.html" with notes=request.user.notes.all %}
+{% endblock list %}
+
+{% block note %}
+    <form method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <input type="submit" value="Save">
+    </form>
+{% endblock note %}
