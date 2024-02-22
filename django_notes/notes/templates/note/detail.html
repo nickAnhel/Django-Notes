@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load tags %}
 
 {% block title %}{{ note.title }}{% endblock title %}
 
@@ -7,11 +8,11 @@
 {% endblock list %}
 
 {% block note %}
-    <p>
+    <h2 style="color: #fff;">
         {{ note.title }}
-    </p>
-    <p>
-        {{ note.body|linebreaks }}
+    </h2>
+    <p style="color: #fff">
+        {{ note.body|markdown }}
     </p>
     <p>
         <a href="{% url "notes:edit" slug=note.slug %}">Edit</a>

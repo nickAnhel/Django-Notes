@@ -5,6 +5,10 @@ body {
     height: 100%;
 }
 
+h2 {
+    color: #fff;
+}
+
 /* Header */
 header {
     background-color: #000;
