@@ -1,7 +1,8 @@
 import re
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.text import slugify
+from django.contrib import messages
 
 from .models import Note
 from .forms import NoteForm
@@ -53,6 +54,14 @@ def note_edit(request: HttpRequest, slug) -> HttpResponse:
 
         if note_edit_form.is_valid():
             note: Note = note_edit_form.save(commit=False)
+
+            for user_note in Note.objects.filter(user=request.user).exclude(
+                slug=note.slug
+            ):
+                if note.title == user_note.title:
+                    messages.error(request, "This title is already exists")
+                    return render(request, "note/edit.html", {"form": note_edit_form})
+
             note.slug = slugify(note_edit_form.cleaned_data["title"])
             note.save()
 
@@ -62,3 +71,20 @@ def note_edit(request: HttpRequest, slug) -> HttpResponse:
         note_edit_form = NoteForm(instance=Note.objects.get(slug=slug))
 
     return render(request, "note/edit.html", {"form": note_edit_form})
+
+
+def note_delete(request: HttpRequest, slug) -> HttpResponseRedirect:
+    note_to_delete = get_object_or_404(Note, slug=slug)
+    note_to_delete.delete()
+    return HttpResponseRedirect("/notes")
+    # if request.method == "POST":
+    #     note_delete_form = NoteDeleteForm(data=request.POST, instance=note_to_delete)
+
+    #     if note_delete_form.is_valid():
+    #         note_to_delete.delete()
+    #         return HttpResponseRedirect("/notes")
+
+    # else:
+    #     note_delete_form = NoteDeleteForm(instance=note_to_delete)
+
+    # return render(request, "note/delete.html", {"form": note_delete_form})

@@ -18,6 +18,13 @@
         </div>
 
         <div class="note">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             {% block note %}{% endblock note %}
         </div>
     </main>

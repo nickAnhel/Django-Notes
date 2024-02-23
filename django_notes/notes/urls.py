@@ -7,6 +7,7 @@ app_name = "notes"
 detail_patterns = [
     path("", views.note_detail, name="detail"),
     path("edit/", views.note_edit, name="edit"),
+    path("delete/", views.note_delete, name="delete")
 ]
 
 urlpatterns = [
