@@ -14,11 +14,14 @@
     <p style="color: #fff">
         {{ note.body|markdown }}
     </p>
-    <p>
-        <a href="{% url "notes:edit" slug=note.slug %}">Edit</a>
-    </p>
 
-    <p>
-        <a href="{% url "notes:delete" slug=note.slug %}">Delete</a>
-    </p>
+    {% if note in request.user.notes.all %}
+        <p>
+            <a href="{% url "notes:edit" slug=note.slug %}">Edit</a>
+        </p>
+
+        <p>
+            <a href="{% url "notes:delete" slug=note.slug %}">Delete</a>
+        </p>
+    {% endif %}
 {% endblock note %}

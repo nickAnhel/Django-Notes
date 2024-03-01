@@ -8,7 +8,7 @@ class Note(models.Model):
 
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200)
-    body = models.TextField()
+    body = models.TextField(blank=True)
 
     created = models.DateTimeField(auto_now_add=True)
 

@@ -3,5 +3,5 @@
 {% block title %}Notes List{% endblock title %}
 
 {% block list %}
-    {% include "note/list.html" with notes=notes %}
+    {% include "note/list.html" with notes=request.user.notes.all %}
 {% endblock list %}

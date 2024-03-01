@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+
 import os
 from pathlib import Path
 
@@ -31,13 +32,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "account.apps.AccountConfig",
+    "notes.apps.NotesConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "notes.apps.NotesConfig",
 ]
 
 MIDDLEWARE = [
@@ -122,3 +124,16 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Login settings
+LOGIN_REDIRECT_URL = "/notes"
+LOGIN_URL = "login"
+LOGOUT_URL = "logout"
+
+# Email settings
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = os.environ.get("GOOGLE_EMAIL")
+EMAIL_HOST_PASSWORD = os.environ.get("GOOGLE_PASSWORD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True  # TLS - Transport Layer Security

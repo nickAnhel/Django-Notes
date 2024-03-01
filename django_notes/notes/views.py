@@ -1,4 +1,5 @@
 import re
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.text import slugify
@@ -8,16 +9,19 @@ from .models import Note
 from .forms import NoteForm
 
 
+@login_required
 def note_list(request: HttpRequest) -> HttpResponse:
-    notes = Note.objects.all()  # .filter(user=request.user)
+    notes = request.user.notes.all()
     return render(request, "note/note_list.html", {"notes": notes})
 
 
+@login_required
 def note_detail(request: HttpRequest, slug) -> HttpResponse:
     note = get_object_or_404(Note, slug=slug)
     return render(request, "note/detail.html", {"note": note})
 
 
+@login_required
 def note_create(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         note_create_form = NoteForm(data=request.POST)
@@ -46,11 +50,13 @@ def note_create(request: HttpRequest) -> HttpResponse:
     return render(request, "note/create.html", {"form": note_create_form})
 
 
+@login_required
 def note_edit(request: HttpRequest, slug) -> HttpResponse:
     if request.method == "POST":
         note_edit_form = NoteForm(
-            instance=Note.objects.get(slug=slug), data=request.POST
+            instance=request.user.notes.get(slug=slug), data=request.POST
         )
+
 
         if note_edit_form.is_valid():
             note: Note = note_edit_form.save(commit=False)
@@ -68,23 +74,20 @@ def note_edit(request: HttpRequest, slug) -> HttpResponse:
             return redirect(note.get_absolute_url())
 
     else:
-        note_edit_form = NoteForm(instance=Note.objects.get(slug=slug))
+        try:
+            note_edit_form = NoteForm(instance=request.user.notes.get(slug=slug))
+        except Note.DoesNotExist:
+            return HttpResponseRedirect("/notes")
 
     return render(request, "note/edit.html", {"form": note_edit_form})
 
 
+@login_required
 def note_delete(request: HttpRequest, slug) -> HttpResponseRedirect:
-    note_to_delete = get_object_or_404(Note, slug=slug)
-    note_to_delete.delete()
+    try:
+        note_to_delete = request.user.notes.get(slug=slug)
+        note_to_delete.delete()
+    except Note.DoesNotExist:
+        ...
+
     return HttpResponseRedirect("/notes")
-    # if request.method == "POST":
-    #     note_delete_form = NoteDeleteForm(data=request.POST, instance=note_to_delete)
-
-    #     if note_delete_form.is_valid():
-    #         note_to_delete.delete()
-    #         return HttpResponseRedirect("/notes")
-
-    # else:
-    #     note_delete_form = NoteDeleteForm(instance=note_to_delete)
-
-    # return render(request, "note/delete.html", {"form": note_delete_form})
